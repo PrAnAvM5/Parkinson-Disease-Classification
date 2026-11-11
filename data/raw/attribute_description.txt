@@ -1,0 +1,76 @@
+Dataset attribute description (Data to be provided in Canvas):
+
+1. PatientID: Unique identifier for each patient [3058–5162]
+
+2. Age: Age of the patient [50–90 years]
+
+3. Gender: Gender of the patient [0: Male, 1: Female]
+
+4. Ethnicity: Ethnic background [0: Caucasian, 1: African American, 2: Asian, 3: Other]
+
+5. EducationLevel: Highest education attained [0: None, 1: High School, 2: Bachelor's, 3: Higher]
+
+6. BMI: Body Mass Index [15–40]
+
+7. Smoking: Smoking status [0: No, 1: Yes]
+
+8. AlcoholConsumption: Weekly alcohol consumption [0–20 units]
+
+9. PhysicalActivity: Weekly physical activity [0–10 hours]
+
+10. DietQuality: Diet quality score [0–10]
+
+11. SleepQuality: Sleep quality score [4–10]
+
+12. FamilyHistoryParkinsons: Family history of Parkinson's Disease [0: No, 1: Yes]
+
+13. TraumaticBrainInjury: History of traumatic brain injury [0: No, 1: Yes]
+
+14. Hypertension: Presence of hypertension [0: No, 1: Yes]
+
+15. Diabetes: Presence of diabetes [0: No, 1: Yes]
+
+16. Depression: Presence of depression [0: No, 1: Yes]
+
+17. Stroke: History of stroke [0: No, 1: Yes]
+
+18. SystolicBP: Systolic blood pressure [90–180 mmHg]
+
+19. DiastolicBP: Diastolic blood pressure [60–120 mmHg]
+
+20. CholesterolTotal: Total cholesterol [150–300 mg/dL]
+
+21. CholesterolLDL: LDL cholesterol [50–200 mg/dL]
+
+22. CholesterolHDL: HDL cholesterol [20–100 mg/dL]
+
+23. CholesterolTriglycerides: Triglyceride levels [50–400 mg/dL]
+
+24. UPDRS: Unified Parkinson's Disease Rating Scale score [0–199] — higher scores indicate greater disease severity
+
+25. MoCA: Montreal Cognitive Assessment score [0–30] — lower scores indicate cognitive impairment
+
+26. FunctionalAssessment: Functional assessment score [0–10] — lower scores indicate greater impairment
+
+27. Tremor: Presence of tremor [0: No, 1: Yes]
+
+28. Rigidity: Presence of muscle rigidity [0: No, 1: Yes]
+
+29. Bradykinesia: Presence of bradykinesia (slowness of movement) [0: No, 1: Yes]
+
+30. PosturalInstability: Presence of postural instability [0: No, 1: Yes]
+
+31. SpeechProblems: Presence of speech problems [0: No, 1: Yes]
+
+32. SleepDisorders: Presence of sleep disorders [0: No, 1: Yes]
+
+33. Constipation: Presence of constipation [0: No, 1: Yes]
+
+34. Diagnosis: Parkinson's Disease diagnosis [0: No, 1: Yes]
+
+35. DoctorInCharge: Confidential doctor identifier; the value is "DrXXXConfid" for all patients
+
+Notes:
+- PatientID is an identifier and should not be used as a predictive feature.
+- DoctorInCharge is constant/confidential and should not be used as a predictive feature.
+- The dataset is synthetic and was generated for educational purposes.
