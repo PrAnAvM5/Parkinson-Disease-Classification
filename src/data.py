@@ -8,7 +8,6 @@ See README for the agreed formats.
 import pandas as pd
 import os
 from sklearn.model_selection import train_test_split
-import warnings
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.dirname(ROOT_DIR)
@@ -115,6 +114,11 @@ def load_train():
     return _load_split("train")
 
 def load_test():
-    """Return (X_test, y_test) — ONLY call this after thresholds are frozen!"""
-    warnings.warn("load_test() called! Only use this after all models and thresholds are finalized!", UserWarning, stacklevel=2)
+    """Return (X_test, y_test) — ONLY call after thresholds are frozen!"""
+    threshold_path = os.path.join(PARENT_DIR, "results", "thresholds.json")
+    if not os.path.exists(threshold_path):
+        raise RuntimeError(
+            "load_test() is locked! results/thresholds.json does not exist yet."
+            "Only call this after all models and thresholds are finalized in 04_evaluation.ipynb."
+        )
     return _load_split("test")
