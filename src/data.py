@@ -16,20 +16,11 @@ DATA_RAW = os.path.join(PARENT_DIR, "data", "raw", "parkinsons_disease_data.csv"
 SPLIT_PATH = os.path.join(PARENT_DIR, "data", "processed", "split.csv")
 SEED = 42
 
-CONTINUOUS_COLS = [
-    "Age", "BMI", "AlcoholConsumption", "PhysicalActivity",
-    "DietQuality", "SleepQuality", "SystolicBP", "DiastolicBP",
-    "CholesterolTotal", "CholesterolLDL", "CholesterolHDL",
-    "CholesterolTriglycerides", "UPDRS", "MoCA", "FunctionalAssessment"
-]
+CONTINUOUS_COLS = ["Age", "BMI", "AlcoholConsumption", "PhysicalActivity", "DietQuality", "SleepQuality", "SystolicBP", "DiastolicBP", 
+                   "CholesterolTotal", "CholesterolLDL", "CholesterolHDL", "CholesterolTriglycerides", "UPDRS", "MoCA", "FunctionalAssessment"]
 
-BINARY_COLS = [
-    "Gender", "Smoking", "FamilyHistoryParkinsons",
-    "TraumaticBrainInjury", "Hypertension", "Diabetes",
-    "Depression", "Stroke", "Tremor", "Rigidity",
-    "Bradykinesia", "PosturalInstability", "SpeechProblems",
-    "SleepDisorders", "Constipation"
-]
+BINARY_COLS = ["Gender", "Smoking", "FamilyHistoryParkinsons", "TraumaticBrainInjury", "Hypertension", "Diabetes", "Depression", "Stroke", "Tremor", "Rigidity",
+               "Bradykinesia", "PosturalInstability", "SpeechProblems", "SleepDisorders", "Constipation"]
 
 CATEGORICAL_COLS = ["Ethnicity"]   # → OneHotEncoder
 ORDINAL_COLS     = ["EducationLevel"]  # → treat as numeric / OrdinalEncoder
@@ -118,7 +109,7 @@ def load_test():
     threshold_path = os.path.join(PARENT_DIR, "results", "thresholds.json")
     if not os.path.exists(threshold_path):
         raise RuntimeError(
-            "load_test() is locked! results/thresholds.json does not exist yet."
+            "load_test() is locked! results/thresholds.json does not exist yet. "
             "Only call this after all models and thresholds are finalized in 04_evaluation.ipynb."
         )
     return _load_split("test")

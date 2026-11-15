@@ -10,17 +10,18 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from src.data import CONTINUOUS_COLS, BINARY_COLS, CATEGORICAL_COLS, ORDINAL_COLS
 
+MOTOR_SYMPTOM_COLS = ["Tremor", "Rigidity", "Bradykinesia", "PosturalInstability"]
+NON_MOTOR_SYMPTOM_COLS = ["SpeechProblems", "SleepDisorders", "Constipation"]
+
 def add_engineered_features(df):
     """Add row-wise engineered features."""
     df = df.copy()
+
+    # Computed for EDA inspection only — excluded from model pipeline
     df["PulsePressure"] = df["SystolicBP"] - df["DiastolicBP"]
 
-    SYMPTOM_COLS = [
-        "Tremor", "Rigidity", "Bradykinesia",
-        "PosturalInstability", "SpeechProblems",
-        "SleepDisorders", "Constipation"
-    ]
-    df["SymptomCount"] = df[SYMPTOM_COLS].sum(axis=1)
+    df["MotorSymptomCount"] = df[MOTOR_SYMPTOM_COLS].sum(axis=1)
+    df["SymptomCount"] = df[NON_MOTOR_SYMPTOM_COLS].sum(axis=1) 
 
     return df
 
@@ -33,7 +34,7 @@ def build_preprocessor(use_engineered = False):
     continuous = CONTINUOUS_COLS.copy()
 
     if use_engineered:
-        continuous += ["PulsePressure", "SymptomCount"]
+        continuous += ["SymptomCount", "MotorSymptomCount"]
 
     return ColumnTransformer(transformers=[
         ("scale", StandardScaler(), continuous),
