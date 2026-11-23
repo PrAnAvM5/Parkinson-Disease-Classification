@@ -11,7 +11,7 @@ three final models once on a held-out test set.
 
 ```bash
 git clone <repo-url>
-cd pd-classification
+cd Parkinson-Disease-Classification
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -25,20 +25,24 @@ Run the notebooks top to bottom, in this order (or `bash run_all.sh`):
 | # | Notebook | Owner | Reads | Writes |
 |---|---|---|---|---|
 | 01 | `01_data_understanding` | Charlotte | `data/raw/` | `data/processed/split.csv`, `results/figures/eda/` |
-| 02 | `02_data_preparation` | Charlotte | dev set | decisions in `src/preprocessing.py` |
-| 03a | `03a_model_svm` | Pranav | dev set | `results/tuning/svm_configs.csv`, `results/scores/svm_oof.csv`, `results/models/svm.joblib` |
-| 03b | `03b_model_mlp` | Pranav | dev set | `results/tuning/mlp_configs.csv`, `results/scores/mlp_oof.csv`, `results/models/mlp.joblib` |
-| 03c | `03c_model_fis` | Renske | dev set | `results/scores/fis_oof.csv`, `results/models/fis.json` |
-| 04 | `04_evaluation` | Pranav | all `*_oof.csv`, models, **test set (once)** | `results/thresholds.json`, `results/test_metrics.csv` |
-| 05 | `05_decision_support` | Marc? / Pranav | `results/test_metrics.csv` | `results/figures/decision/` |
+| 02 | `02_data_preparation` | Charlotte | train set | decisions in `src/preprocessing.py`, `results/figures/eda/` |
+| 03a | `03a_model_svm` | Pranav | train set | `results/tuning/svm_configs.csv`, `results/scores/svm_oof.csv`, `results/models/svm.joblib`, `results/figures/models/svm_*.png` |
+| 03b | `03b_model_mlp` | Pranav | train set, `svm_oof.csv` (for comparison) | `results/tuning/mlp_configs.csv`, `results/scores/mlp_oof.csv`, `results/models/mlp.joblib`, `results/figures/models/mlp_*.png` |
+| 03c | `03c_model_fis` | Renske | train set | `results/scores/fis_oof.csv`, `results/models/fis.json` |
+| 04 | `04_evaluation` | Hime, Marc | all `*_oof.csv`, models, **test set (once)** | `results/thresholds.json`, `results/test_metrics.csv` |
+| 05 | `05_decision_support` | Hime, Marc | `results/test_metrics.csv` | `results/figures/decision/` |
 
-03a, 03b and 03c are independent and can run in any order.
+03a, 03b and 03c can run in any order, except that 03b reads `svm_oof.csv` for its SVM comparison (run 03a first).
 
 ## Folders
 
 - `data/raw/`: original CSV and attribute description. **Never edit.**
 - `data/processed/`: `split.csv`, generated once by notebook 01.
-- `src/`: shared functions imported by the notebooks (the toolbox).
+- `src/`: shared functions imported by the notebooks (the toolbox):
+  - `data.py`: loading, quality checks, the train/test split, column groups (`load_train()`, `load_test()`)
+  - `preprocessing.py`: engineered features and the preprocessing pipeline (`add_engineered_features()`, `build_preprocessor()`)
+  - `validation.py`: shared CV folds, OOF scores, F2 threshold, metrics (`get_cv()`, `oof_scores()`, `save_oof()`, `best_f2_threshold()`, `classification_metrics()`)
+  - `fis.py`: the fuzzy inference system
 - `notebooks/`: one notebook per step, one owner each (the workbench).
 - `results/`: everything the notebooks produce (the hand-offs).
 
@@ -46,9 +50,11 @@ Run the notebooks top to bottom, in this order (or `bash run_all.sh`):
 
 | File | Format |
 |---|---|
-| `data/processed/split.csv` | `PatientID, set` where set is `dev` or `test` |
-| `load_dev()` / `load_test()` | return `X` (DataFrame, PatientID index), `y` (Series) |
-| `results/scores/*_oof.csv` | `PatientID, y_true, score` (higher score = more likely PD) |
+| `data/processed/split.csv` | `PatientID, split` where split is `train` or `test` |
+| `load_train()` / `load_test()` | return `X` (DataFrame, PatientID index), `y` (Series); `load_test()` only works once `results/thresholds.json` exists |
+| `build_preprocessor(use_engineered, use_bins)` | unfitted `ColumnTransformer`; SVM and MLP use `use_engineered=True, use_bins=True` (adds 10 one-hot decile bins for UPDRS, MoCA, FunctionalAssessment) |
+| Models (`*.joblib`) | whole pipeline (preprocessing + model): call `add_engineered_features(X)` before scoring |
+| `results/scores/*_oof.csv` | `PatientID, y_true, score` (higher score = more likely PD; SVM scores are decision-function values, MLP and FIS are probabilities in [0, 1]) |
 | FIS | `FIS().fit(X_train)` and `.score(X)` returning values in [0, 1] |
 | `results/thresholds.json` | `{"svm": t, "mlp": t, "fis": t}` |
 | `results/test_metrics.csv` | `model, TP, FN, FP, TN, recall, precision, specificity, F2` |
@@ -56,7 +62,7 @@ Run the notebooks top to bottom, in this order (or `bash run_all.sh`):
 ## Rules
 
 1. The test set is opened **only** in `04_evaluation`, once, after thresholds are frozen.
-2. Preprocessing is fitted inside each CV fold (via `Pipeline`), never on all data.
+2. Preprocessing (scaling, encoding, bins) is fitted inside each CV fold (via `Pipeline`), never on all data. All models use the same folds from `get_cv()`.
 3. At most 20 configurations for the SVM family (both kernels together) and 20 for the MLP.
 4. FIS data-dependent settings come from training data only.
 5. No changes to any model or threshold after seeing test results.
